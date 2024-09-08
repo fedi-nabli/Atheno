@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express'
+import express, { Express, Request, Response } from 'express'
 import dotenv from 'dotenv'
 import colors from 'colors'
 
@@ -8,7 +8,7 @@ import { notFound, errorHandler } from './middleware/errorMiddleware'
 dotenv.config()
 connectDB()
 
-const app = express()
+const app: Express = express()
 app.use(express.json())
 
 app.get('/', (req: Request, res: Response) => {
