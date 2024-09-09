@@ -5,11 +5,15 @@ import colors from 'colors'
 import connectDB from './config/db'
 import { notFound, errorHandler } from './middleware/errorMiddleware'
 
+import taskRoutes from './routes/taskRoutes'
+
 dotenv.config()
 connectDB()
 
 const app: Express = express()
 app.use(express.json())
+
+app.use('/api/tasks', taskRoutes)
 
 app.get('/', (_req: Request, res: Response) => {
   res.send('API is running...')
