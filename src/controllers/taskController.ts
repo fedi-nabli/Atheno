@@ -56,8 +56,28 @@ const getTaskById = async (req: Request, res: Response, next: NextFunction): Pro
   }
 }
 
+const deleteTask = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const task: ITask | null = await Task.findByIdAndDelete(req.params.id)
+
+    if (!task) {
+      res.status(404)
+      throw new Error('Task not found')
+    }
+
+    res.status(200).json({
+      message: 'Task deleted successfully',
+      success: true,
+      task
+    })
+  } catch (error) {
+    next(new Error('An error occured while deleting task'))
+  }
+}
+
 export {
   getAllTasks,
   createTask,
-  getTaskById
+  getTaskById,
+  deleteTask
 }
