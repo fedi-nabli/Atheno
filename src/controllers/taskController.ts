@@ -75,9 +75,32 @@ const deleteTask = async (req: Request, res: Response, next: NextFunction): Prom
   }
 }
 
+const updateTask = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const task: ITask | null = await Task.findById(req.params.id)
+
+    if (!task) {
+      res.status(404)
+      throw new Error('Task not found')
+    }
+
+    task.title = req.body.title || task.title
+    task.description = req.body.description || task.description
+    task.status = req.body.status || task.status
+    task.dueDate = req.body.dueDate || task.dueDate
+
+    await task.save()
+
+    res.status(200).json(task)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export {
   getAllTasks,
   createTask,
   getTaskById,
+  updateTask,
   deleteTask
 }
