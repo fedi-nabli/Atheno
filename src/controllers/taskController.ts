@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import Task, { ITask } from '../models/taskModel'
+import taskModel from '../models/taskModel'
 
 const getAllTasks = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -40,7 +41,23 @@ const createTask = async (req: Request, res: Response, next: NextFunction): Prom
   }
 }
 
+const getTaskById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const task: ITask | null = await Task.findById(req.params.id)
+
+    if (!task) {
+      res.status(404)
+      throw new Error('Task not found')
+    }
+
+    res.status(200).json(task)
+  } catch (error) {
+    next(new Error('An error occured while fetching task'))
+  }
+}
+
 export {
   getAllTasks,
-  createTask
+  createTask,
+  getTaskById
 }
