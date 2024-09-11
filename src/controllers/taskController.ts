@@ -1,7 +1,7 @@
-import { Request, Response } from 'express'
+import { Request, Response, NextFunction } from 'express'
 import Task, { ITask } from '../models/taskModel'
 
-const getAllTasks = async (_req: Request, res: Response): Promise<void> => {
+const getAllTasks = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const tasks: ITask[] = await Task.find()
     res.status(200)
@@ -10,14 +10,37 @@ const getAllTasks = async (_req: Request, res: Response): Promise<void> => {
       count: tasks.length
     })
   } catch (error) {
-    res.status(500)
-    res.json({
-      message: 'Error fetching tasks',
-      error
+    next(new Error('Error fetching tasks'))
+  }
+}
+
+const createTask = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const {
+      title,
+      description,
+      status,
+      dueDate
+    } = req.body
+
+    const task: ITask = new Task({
+      title,
+      description,
+      status,
+      dueDate
     })
+    await task.save()
+
+    res.status(201).json(task)
+  } catch (error) {
+    if (error instanceof Error) {
+      next(error)
+    }
+    next(new Error('Invalid data'))
   }
 }
 
 export {
-  getAllTasks
+  getAllTasks,
+  createTask
 }
